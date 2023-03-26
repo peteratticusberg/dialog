@@ -1,0 +1,6 @@
+
+
+- sendChatPrompt ({aOrB, transcript})
+- wait
+	- waits 10 seconds
+- executeDialogue ({initalPromptA, initialPromptB})
