@@ -2,47 +2,62 @@ from tokens import get_token_count
 from get_chat_completion import get_chat_completion
 from datetime import datetime
 import json
+import blessed
 
 
 def start_dialogue(initial_prompt_a, initial_prompt_b):
     system_message = {'role': 'system', 'content': 'You are a helpful assistant.'}
-    messages_a = [system_message]
-    messages_b = [system_message]
-    messages_a.append({'role': 'user', 'content': initial_prompt_a})
-    messages_b.append({'role': 'user', 'content': initial_prompt_b})
+    messages_a = [system_message, {'role': 'user', 'content': initial_prompt_a}]
+    messages_b = [system_message, {'role': 'user', 'content': initial_prompt_b}]
 
-    a_or_b = 'A'
-    max_messages = 20
-    approximate_token_usage = 0
-    start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    while len(messages_a) <= max_messages:
+    term = blessed.Terminal()    
+    with term.cbreak():
+        a_or_b = 'A'
+        approximate_token_usage = 0
+        key = 'c' 
+        while key != 'q':
+            # print('press q to quit, c to continue, or s for stats')
+            # print(term)
+            # key = term.inkey()
+            if key == 'c':
+                print(f'getting completion for {messages_a[-1]}...')
+                approximate_token_usage += get_token_count(messages_a)
+                message = get_chat_completion(term, get_messages(a_or_b, messages_a, messages_b))    
+                log_message(a_or_b, message, messages_a, messages_b)
+                log_turn(messages_a, messages_b)
+                a_or_b = toggle(a_or_b)
+            elif key == 's':
+                print(f'current conversation size is {get_token_count(messages_a)}.')
+                print(f'estimated token usage is {approximate_token_usage}')
+                print(f'conversation is {len(messages_a)} messages long.')
 
-        messages_token_count = get_token_count(messages_a)
-        approximate_token_usage += messages_token_count 
-        
-        print(f'message count: {len(messages_a)}')
-        print(f'time: {datetime.now().strftime("%H:%M:%S")}')
-        print(f'conversation size: {messages_token_count}')
-        print(f'approximate token usage: {approximate_token_usage}')
 
-        if a_or_b == 'A':
-            message = get_chat_completion(messages_a)
-            print(message)
-            messages_a.append({'content': message, 'role': 'assistant'})
-            messages_b.append({'content': message, 'role': 'user'})
-            a_or_b = 'B'
-        else:
-            message = get_chat_completion(messages_b)
-            print(message)
-            messages_b.append({'content': message, 'role': 'assistant'})
-            messages_a.append({'content': message, 'role': 'user'})
-            a_or_b = 'A'
+def get_messages(a_or_b, messages_a, messages_b):
+    return messages_a if a_or_b == 'A' else messages_b
 
-        with open(f"output/{start_time}.json", "w") as f:
-            conversation_state = {
-                'messages_a': messages_a,
-                'messages_b': messages_b
-            }
-            f.write(json.dumps(conversation_state, indent=2))
-                
-    return messages_a
+
+def toggle(a_or_b):
+    return 'B' if a_or_b == 'A' else 'B'
+
+
+def log_message(a_or_b, message, messages_a, messages_b):
+    if a_or_b == 'A':
+        messages_a.append({'content': message, 'role': 'assistant'})
+        messages_b.append({'content': message, 'role': 'user'})
+    else:
+        messages_b.append({'content': message, 'role': 'assistant'})
+        messages_a.append({'content': message, 'role': 'user'})
+
+start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+def log_turn(messages_a, messages_b):
+    with open(f"output/{start_time}.json", "w") as f:
+        conversation_state = {
+            'messages_a': messages_a,
+            'messages_b': messages_b
+        }
+        f.write(json.dumps(conversation_state, indent=2))
+
+# print(f'message count: {len(messages_a)}')
+# print(f'time: {datetime.now().strftime("%H:%M:%S")}')
+# print(f'conversation size: {messages_token_count}')
+# print(f'approximate token usage: {approximate_token_usage}')
