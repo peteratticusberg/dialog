@@ -1,4 +1,4 @@
-from send_chat_prompt import send_chat_prompt
+from get_chat_completion import get_chat_completion
 
 
 def get_chat_summary(messages):
@@ -16,7 +16,7 @@ def get_chat_summary(messages):
         {str(messages)}
     """
 
-    chat_summary = send_chat_prompt([
+    chat_summary = get_chat_completion([
         {'role': 'system', 'content': 'You are a helpful assistant.'}, 
         {'role': 'user', 'content': summarization_prompt}
     ])
