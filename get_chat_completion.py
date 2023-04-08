@@ -17,18 +17,20 @@ def get_chat_completion(term, messages):
             n=3
         )
         options = [choice.message.content for choice in completion.choices]    
-    
+        # options = ["a", "b", "c"]
+
     key = ''
     selection = 0
     message = None
     while key != 'q':
         print(term.clear())
         for index, option in enumerate(options):
-            preview_text = option[:60].replace("\n", "")
+            preview_text = option[:60].replace('\n', '')
+            option_text = f'{number_to_letter(index)} - {preview_text}'
             if index == selection:
-                print(f'{index}: {term.reverse(preview_text)}')
+                print(f'{term.yellow(option_text)}')
             else:
-                print(f'{index}: {preview_text}') 
+                print(f'{term.blue(option_text)}') 
         print(f'\n\n {options[selection]}')
         
         key = term.inkey()
@@ -44,3 +46,6 @@ def get_chat_completion(term, messages):
         else:
             print(f'key {key} has no name attr')
     return message
+
+def number_to_letter(number):
+    return chr(number + 97)
