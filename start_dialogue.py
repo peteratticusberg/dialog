@@ -20,7 +20,6 @@ def start_dialogue(initial_prompt_a, initial_prompt_b):
             # print(term)
             # key = term.inkey()
             if key == 'c':
-                print(f'getting completion for {messages_a[-1]}...')
                 approximate_token_usage += get_token_count(messages_a)
                 message = get_chat_completion(term, get_messages(a_or_b, messages_a, messages_b))    
                 log_message(a_or_b, message, messages_a, messages_b)
