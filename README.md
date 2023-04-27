@@ -17,14 +17,18 @@ Remember, you're my writing coach and I'd like you to first help me break my sto
 I'm looking forward to getting started!
 ```
 
-To do:
+To do: 
 
-ChatGPT driven analysis and selection of completion.choices based on user input (think: "Select the choice that you think will make for the most (tragic|interesting|surreal) story")
+Add in ability to create arbitrary hooks for:
+- context management, would be good to have different ways to handle this
+- prompt completion selection, e.g. (user-based selection, ability to edit ai generated prompts on the fly, ai-based selection)
+- logging / response persistence (saving stuff to files, persisting to a db, printing to stdout, etc. )
 
-ChatGPT driven turn-based control over Temperature and Top P based on user input (think: "Given what you know about the goals of this conversation, please choose values for temperature and top p that you think align best with these goals")
+Stub in plugins like functionality?
+asyncio? 
 
-Recursive dialogs (e.g. you'd like to write multiple books with a single dialog, so you spawn dialog per book idea and one dialog per chapter for each book)
+Schema for persisting dialog runs / serializing so we can pause and restart 
 
-ChatGPT driven context summaries to expand what can be done within a given context limit
+any point in making it so people could ssh into a server to use this a la alt.org?
 
-ChatGPT driven turn-based pruning of conversations based on relevance for a given prompt
+
